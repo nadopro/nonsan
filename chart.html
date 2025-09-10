@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>계절별 교통사고 (Google Charts)</title>
+  <style>
+    /* 반응형 컨테이너 */
+    .chart-wrap {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 12px;
+    }
+    #chart {
+      width: 100%;
+      height: 420px; /* 필요시 조절 */
+    }
+  </style>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+    // 한국어 로케일로 로더 초기화
+    google.charts.load('current', { packages: ['corechart'], language: 'ko' });
+    google.charts.setOnLoadCallback(draw);
+
+    function draw() {
+      // 데이터 테이블
+      const data = new google.visualization.DataTable();
+      data.addColumn('string', '계절');
+      data.addColumn('number', '교통사고(건수)');
+      // 값 라벨(주석) 표시용 컬럼
+      data.addColumn({ type: 'string', role: 'annotation' });
+
+      const rows = [
+        ['봄',   24, '24'],
+        ['여름', 55, '55'],
+        ['가을', 37, '37'],
+        ['겨울', 64, '64'],
+      ];
+      data.addRows(rows);
+
+      // 옵션
+      const options = {
+        title: '계절별 교통사고',
+        legend: { position: 'none' },
+        pointSize: 6,
+        curveType: 'function',        // 곡선 형태(직선 원하면 제거)
+        hAxis: { title: '계절' },
+        vAxis: { title: '건수', viewWindow: { min: 0 } },
+        annotations: { alwaysOutside: true },
+        chartArea: { left: 60, right: 20, top: 50, bottom: 60 },
+        // 창 크기 변화에 부드럽게 대응
+        animation: { startup: true, duration: 600, easing: 'out' },
+      };
+
+      const chart = new google.visualization.LineChart(document.getElementById('chart'));
+      chart.draw(data, options);
+
+      // 반응형 리사이즈
+      window.addEventListener('resize', () => chart.draw(data, options));
+    }
+  </script>
+</head>
+<body>
+  <div class="chart-wrap">
+    <h2>계절별 교통사고 (Line Chart)</h2>
+    <div id="chart" aria-label="계절별 교통사고 라인 차트"></div>
+  </div>
+</body>
+</html>
