@@ -46,3 +46,9 @@
 슬라이드 끝에 이런 그림을 그리기위한 프롬프트를 작성해 줘.
 
 VBA로 "논산시청"이라고 alert()하는 모듈을 만들어 줘.
+
+
+copilot (코파일럿)
+gemini
+perplexity ai
+claude ai
