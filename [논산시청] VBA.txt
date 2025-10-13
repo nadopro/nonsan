@@ -1,0 +1,254 @@
+1. VBA 예제 (동작 확인)
+
+Sub ShowAlert()
+    MsgBox "Hello VBA World!!"
+End Sub
+
+
+2. VBA 예제
+
+Q1. 
+VBA 버튼을 클릭했을 때, A2, A3, A4, 순서로 1부터 10까지 추가하는 VBA 스크립트를 작성해 줘.
+-------------------------------------------------------------------------------------------------------
+Sub FillNumbers()
+    Dim i As Integer
+    Dim r As Integer
+    
+    r = 2  ' 시작 행 (A2)
+    
+    For i = 1 To 10
+        Cells(r, 1).Value = i  ' (행, 열) → 1열은 A열
+        r = r + 1
+    Next i
+End Sub
+-------------------------------------------------------------------------------------------------------
+
+3. VBA 예제
+
+Q2.
+
+다음 조건을 만족하는 VBA 스크립트를 만들어 줘. 
+- 버튼을 클릭했을 때, 1부터 100까지 순서대로 B2, B3, B4,... 에 출력하려고 해. 
+- 숫자에 3, 6, 9가 들어있는 경우는 건너뛰기 
+- 3, 6, 9 게임에서 숫자를 읽는 경우만 출력하려고 해.
+-------------------------------------------------------------------------------------------------------
+Sub ClapGame()
+    Dim i As Integer
+    Dim rowNum As Integer
+    Dim numStr As String
+    
+    rowNum = 2  ' B2부터 시작
+    
+    For i = 1 To 100
+        numStr = CStr(i)
+        
+        ' 3, 6, 9가 포함되어 있으면 건너뜀
+        If InStr(numStr, "3") = 0 And InStr(numStr, "6") = 0 And InStr(numStr, "9") = 0 Then
+            Cells(rowNum, 2).Value = i
+            rowNum = rowNum + 1
+        End If
+    Next i
+End Sub
+-------------------------------------------------------------------------------------------------------
+
+
+4. VBA 사용자 정의 폼
+
+Q3. 
+
+이렇게 만든 사용자 폼이 있어. 
+텍스트 입력창(TextBox1), 
+체크박스(CheckBx1) 실행버튼(CommandButton1) 
+초기화버튼(CommandButton)이 주요 컴포넌트야. 
+
+동작은 다음과 같아. 
+텍스트입력창은 3, 6, 9 게임의 마지막 값이야. 
+스트입력값이 없으면 기본값으로 "10"을 넣어줘. 
+부터 입력값까지의 값을 출력하려고 해. 
+체크박스가 선택된 경우에는 3, 6, 9가 들어간 숫자는 3, 6, 9의 개수만큼 *로 출력해. 
+예를 들어 13은 "*", 316은 "**"로 출력해 
+체크박스가 선택되지 않은 경우, 3, 6, 9가 들어간 수는 건너뛰기 해. 
+
+실행 버튼을 클릭하면 이 동작을 D2부터 아래로 실행해. 
+초기화 버튼이 클릭하면 D2부터 아래에 있는 데이터를 모두 지워줘. 
+이렇게 동작하는 VBA 스크립트를 작성해 줘.
+
+자동으로 만들어진 코드는 다음과 같아.
+
+Private Sub CheckBox1_Click()
+End Sub
+Private Sub CommandButton1_Click()
+End Sub
+
+Private Sub CommandButton_Click()
+End Sub
+
+Private Sub Label1_Click()
+End Sub
+
+Private Sub TextBox1_Change()
+End Sub
+
+-------------------------------------------------------------------------------------------------------
+Option Explicit
+
+'=== 보조 함수: 3/6/9 포함 개수 세기 ===
+Private Function Count369(ByVal n As Long) As Long
+    Dim s As String, i As Long, ch As String, cnt As Long
+    s = CStr(n)
+    For i = 1 To Len(s)
+        ch = Mid$(s, i, 1)
+        If ch = "3" Or ch = "6" Or ch = "9" Then cnt = cnt + 1
+    Next i
+    Count369 = cnt
+End Function
+
+'=== 체크박스(필요 시 확장용, 지금은 비워둬도 됨) ===
+Private Sub CheckBox1_Click()
+    ' 선택/해제 시 즉시 재계산하고 싶다면 아래 한 줄 주석 해제:
+    ' Call CommandButton1_Click
+End Sub
+
+'=== 실행 버튼 ===
+Private Sub CommandButton1_Click()
+    Dim ws As Worksheet
+    Dim lastVal As Long
+    Dim i As Long, r As Long
+    Dim txt As String
+    Dim c As Long
+
+    Set ws = ActiveSheet
+
+    ' 입력값 확인: 비었거나 숫자 아님 → 10
+    txt = Trim$(Me.TextBox1.Text)
+    If txt = "" Or Not IsNumeric(txt) Then
+        Me.TextBox1.Text = "10"
+        lastVal = 10
+    Else
+        lastVal = CLng(txt)
+        If lastVal < 1 Then lastVal = 10
+    End If
+
+    ' D2부터 채우기
+    r = 2
+    For i = 1 To lastVal
+        c = Count369(i)
+
+        If Me.CheckBox1.Value = True Then
+            ' 체크됨: 3/6/9 포함이면 개수만큼 "*" 출력, 아니면 숫자
+            If c > 0 Then
+                ws.Cells(r, "D").Value = String$(c, "*")
+            Else
+                ws.Cells(r, "D").Value = i
+            End If
+            r = r + 1
+        Else
+            ' 체크 안 됨: 3/6/9 포함 수는 건너뜀, 아니면 숫자
+            If c = 0 Then
+                ws.Cells(r, "D").Value = i
+                r = r + 1
+            End If
+        End If
+    Next i
+End Sub
+
+'=== 초기화 버튼 ===
+Private Sub CommandButton_Click()
+    Dim ws As Worksheet
+    Set ws = ActiveSheet
+    ws.Range("D2:D" & ws.Rows.Count).ClearContents
+End Sub
+
+'=== 라벨/텍스트박스 이벤트(필요 시 사용) ===
+Private Sub Label1_Click()
+End Sub
+
+Private Sub TextBox1_Change()
+End Sub
+
+-------------------------------------------------------------------------------------------------------
+Q4. 
+
+이제 엑셀에서 버튼을 만들어서, 이 "사용자 정의 폼"을 실행하고 싶어.
+-------------------------------------------------------------------------------------------------------
+Sub ShowUserForm()
+    UserForm2.Show
+End Sub
+-------------------------------------------------------------------------------------------------------
+
+차트 만들기
+Q5.
+
+이렇게 "강수교통사고" 시트의 데이터에 VBA를 이용해 차트 그리기를 하고 싶어. 
+버튼을 클릭했을 때, 꺾은선그래프로 계절별 강수량과 교통사고 분포를 차트로 추가할 수 있게 VBA 스크립트를 작성해 줘.
+
+--------------------------------------------------------------------------------------------------------
+Sub MakeSeasonRainAccidentChart()
+    Dim ws As Worksheet
+    Dim co As ChartObject
+    Dim ch As Chart
+    Dim rngCat As Range, rngRain As Range, rngAcc As Range
+    Dim chartName As String
+    
+    chartName = "계절별_강우량_교통사고_추이"
+    
+    ' 1) 시트/데이터 범위
+    Set ws = ThisWorkbook.Worksheets("강수교통사고")
+    Set rngCat = ws.Range("B2:E2") ' 봄~겨울
+    Set rngRain = ws.Range("B3:E3") ' 강우량
+    Set rngAcc = ws.Range("B6:E6")  ' 교통사고
+    
+    ' 2) 기존 차트 제거(같은 이름이면 삭제)
+    On Error Resume Next
+    ws.ChartObjects(chartName).Delete
+    On Error GoTo 0
+    
+    ' 3) 차트 추가(위치는 H2 근처, 크기는 적당히)
+    Set co = ws.ChartObjects.Add( _
+            Left:=ws.Range("H2").Left, _
+            Top:=ws.Range("H2").Top, _
+            Width:=420, Height:=260)
+    co.Name = chartName
+    
+    Set ch = co.Chart
+    ch.ChartType = xlLineMarkers
+    
+    ' 4) 시리즈 구성 - 강우량 (주축)
+    With ch.SeriesCollection.NewSeries
+        .Name = "강우량(mm)"
+        .XValues = rngCat
+        .Values = rngRain
+        .AxisGroup = xlPrimary
+    End With
+    
+    ' 5) 시리즈 구성 - 교통사고 (보조축)
+    With ch.SeriesCollection.NewSeries
+        .Name = "교통사고(건)"
+        .XValues = rngCat
+        .Values = rngAcc
+        .AxisGroup = xlSecondary
+    End With
+    
+    ' 6) 제목/축 제목/범례
+    ch.HasTitle = True
+    ch.ChartTitle.Text = "계절별 강우량·교통사고 추이"
+    
+    ' 주축 제목(강우량)
+    With ch.Axes(xlValue, xlPrimary)
+        .HasTitle = True
+        .AxisTitle.Characters.Text = "강우량(mm)"
+    End With
+    
+    ' 보조축 제목(교통사고)
+    With ch.Axes(xlValue, xlSecondary)
+        .HasTitle = True
+        .AxisTitle.Characters.Text = "교통사고(건)"
+    End With
+    
+    ch.HasLegend = True
+End Sub
+--------------------------------------------------------------------------------------------------------
+
+
+
+
