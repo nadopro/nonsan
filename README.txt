@@ -235,3 +235,134 @@ Private Function Contains369(ByVal n As Long) As Boolean
     s = CStr(n)
     Contains369 = (InStr(1, s, "3") > 0) Or (InStr(1, s, "6") > 0) Or (InStr(1, s, "9") > 0)
 End Function
+
+
+
+
+첨부한 이미지와 같은 "사용자 정의 폼"의 기능을 만들고 싶어.
+생성된 기본 코드는 다음과 같아.
+
+CommandButton1은 "실행" 버튼, 
+CommandButton2는 "초기화" 버튼
+
+실행버튼을 클릭하면 다음과 같이 동작해.
+1부터 입력창(TextBox1)의 값까지 3,6,9게임을 하고 싶어.
+E2, E3, E4, .. 에 출력할거야.
+만약에 입력창의 값이 없으면 기본값으로 "10"을 설정해.
+
+체크박스가 체크된 경우에는 다음과 같이 동작해.
+3, 6, 9가 포함된 경우에는 3, 6, 9의 갯수만큼 별표(*)를 출력해.
+예를 들어 3은 * , 9는 *,  316은 ** 이렇게 출력해.
+체크가 안된경우에는 3, 6, 9가 포함된 숫자는 스킵해.
+
+초기화 버튼을 클릭하면 E2, E3, 아래의 모든 값을 지워줘.
+
+Private Sub CheckBox1_Click()
+
+End Sub
+
+Private Sub CommandButton1_Click()
+
+End Sub
+
+Private Sub CommandButton2_Click()
+
+End Sub
+
+Private Sub Label1_Click()
+
+End Sub
+
+Private Sub TextBox1_Change()
+
+End Sub
+
+
+------------------------------------------------
+Option Explicit
+
+' ▣ 실행 버튼
+Private Sub CommandButton1_Click()
+    Dim target As Long
+    Dim n As Long, r As Long
+    Dim lastRow As Long
+    Dim txt As String
+    
+    ' 1) 목표값 결정: 비어 있으면 기본값 10
+    txt = Trim(Me.TextBox1.Text)
+    If txt = "" Then
+        target = 10
+    ElseIf IsNumeric(txt) Then
+        target = CLng(txt)
+        If target <= 0 Then
+            MsgBox "1 이상의 정수를 입력하세요.", vbExclamation
+            Exit Sub
+        End If
+    Else
+        MsgBox "숫자를 입력하세요.", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 2) 기존 출력 지우기 (E2↓)
+    lastRow = Cells(Rows.Count, "E").End(xlUp).Row
+    If lastRow < 2 Then lastRow = 2
+    Range("E2:E" & lastRow).ClearContents
+    
+    ' 3) 369 로직 적용하여 E열 채우기
+    r = 2
+    For n = 1 To target
+        If Me.CheckBox1.Value = True Then
+            ' 체크됨: 3/6/9가 포함되면 개수만큼 별표, 아니면 숫자
+            Dim c As Long
+            c = Count369(n)
+            If c > 0 Then
+                Cells(r, "E").Value = String(c, "*")
+            Else
+                Cells(r, "E").Value = n
+            End If
+            r = r + 1
+        Else
+            ' 체크 해제: 3/6/9 포함된 숫자는 스킵
+            If Not Contains369(n) Then
+                Cells(r, "E").Value = n
+                r = r + 1
+            End If
+        End If
+    Next n
+End Sub
+
+' ▣ 초기화 버튼
+Private Sub CommandButton2_Click()
+    Dim lastRow As Long
+    lastRow = Cells(Rows.Count, "E").End(xlUp).Row
+    If lastRow < 2 Then lastRow = 2
+    Range("E2:E" & lastRow).ClearContents
+End Sub
+
+' ▣ 체크박스/라벨/텍스트박스 이벤트는 필요 시 사용하세요
+Private Sub CheckBox1_Click()
+    ' 필요 시 체크 상태에 따라 안내문/라벨 업데이트 등 구현
+End Sub
+
+Private Sub Label1_Click()
+End Sub
+
+Private Sub TextBox1_Change()
+    ' 필요 시 실시간 입력 검증/포맷팅 구현
+End Sub
+
+' ───────────── 헬퍼 함수 ─────────────
+Private Function Contains369(ByVal n As Long) As Boolean
+    Contains369 = (Count369(n) > 0)
+End Function
+
+Private Function Count369(ByVal n As Long) As Long
+    Dim s As String, i As Long, ch As String
+    s = CStr(n)
+    For i = 1 To Len(s)
+        ch = Mid$(s, i, 1)
+        If ch = "3" Or ch = "6" Or ch = "9" Then
+            Count369 = Count369 + 1
+        End If
+    Next i
+End Function
