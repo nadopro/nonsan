@@ -366,3 +366,12 @@ Private Function Count369(ByVal n As Long) As Long
         End If
     Next i
 End Function
+
+
+-----------------------------------------------
+
+엑셀에서 버튼을 클릭했을 때, 지금 정의한 "사용자 정의 폼"을 실행하고 싶어.
+
+Sub ShowUserForm()
+    UserForm1.Show
+End Sub
