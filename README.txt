@@ -375,3 +375,138 @@ End Function
 Sub ShowUserForm()
     UserForm1.Show
 End Sub
+
+
+
+RGB
+
+FE0000
+
+FFFFFF
+
+
+이렇게 "강수교통사고" 시트의 데이터에 VBA를 이용해 차트 그리기를 하고 싶어. 
+버튼을 클릭했을 때, 꺾은선그래프로 계절별 강수량과 교통사고 분포를 차트로 추가할 수 있게 VBA 스크립트를 작성해 줘.
+
+
+Option Explicit
+
+Sub MakeSeasonLineChart()
+    Const SHT As String = "강수교통사고"
+    Const CHART_NAME As String = "계절별_강수량_교통사고"
+    
+    Dim ws As Worksheet
+    Dim rRain As Variant, rSnow As Variant, rAcc As Variant
+    Dim rowRain As Long, rowSnow As Long, rowAcc As Long
+    Dim lastCol As Long, j As Long, n As Long
+    Dim cats() As Variant, precip() As Double, acc() As Double
+    Dim co As ChartObject, ch As Chart
+    
+    On Error GoTo EH
+    Set ws = ThisWorkbook.Worksheets(SHT)
+    
+    ' 머리글(계절) 마지막 열 찾기: 2행 B~?
+    lastCol = ws.Cells(2, ws.Columns.Count).End(xlToLeft).Column
+    If lastCol < 3 Then
+        MsgBox "계절 머리글(B2~)을 확인하세요.", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 라벨 행 위치 찾기 (A열에 라벨이 있다고 가정)
+    rowRain = NzMatch("강우량", ws.Range("A:A"))
+    rowSnow = NzMatch("강설량", ws.Range("A:A"))   '없으면 0
+    rowAcc = NzMatch("교통사고", ws.Range("A:A"))
+    If rowRain = 0 And rowSnow = 0 Then
+        MsgBox "강우량/강설량 행을 찾을 수 없습니다.", vbExclamation
+        Exit Sub
+    End If
+    If rowAcc = 0 Then
+        MsgBox "교통사고 행을 찾을 수 없습니다.", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 카테고리/시리즈 배열 작성 (B열=2부터 lastCol까지)
+    n = lastCol - 1
+    ReDim cats(1 To n)
+    ReDim precip(1 To n)
+    ReDim acc(1 To n)
+    
+    For j = 2 To lastCol
+        cats(j - 1) = ws.Cells(2, j).Value  '봄,여름,가을,겨울
+        
+        precip(j - 1) = 0
+        If rowRain > 0 Then precip(j - 1) = NzD(ws.Cells(rowRain, j).Value)
+        If rowSnow > 0 Then precip(j - 1) = precip(j - 1) + NzD(ws.Cells(rowSnow, j).Value)
+        
+        acc(j - 1) = NzD(ws.Cells(rowAcc, j).Value)
+    Next j
+    
+    ' 이전 차트 삭제(같은 이름이면)
+    On Error Resume Next
+    ws.ChartObjects(CHART_NAME).Delete
+    On Error GoTo 0
+    
+    ' 차트 추가
+    Set co = ws.ChartObjects.Add(Left:=ws.Columns(lastCol + 1).Left, _
+                                 Top:=ws.Rows(2).Top, _
+                                 Width:=520, Height:=320)
+    co.Name = CHART_NAME
+    Set ch = co.Chart
+    ch.ChartType = xlLineMarkers
+    
+    ' 시리즈 1: 총 강수량(강우량+강설량)
+    With ch.SeriesCollection.NewSeries
+        .Name = "총 강수량"
+        .XValues = cats
+        .Values = precip
+        .AxisGroup = xlPrimary
+    End With
+    
+    ' 시리즈 2: 교통사고
+    With ch.SeriesCollection.NewSeries
+        .Name = "교통사고"
+        .XValues = cats
+        .Values = acc
+        .AxisGroup = xlPrimary
+    End With
+    
+    ' 제목/축/범례
+    ch.HasTitle = True
+    ch.ChartTitle.Text = "계절별 강수량·교통사고"
+    ch.HasLegend = True
+    ch.Axes(xlCategory).HasTitle = False
+    ch.Axes(xlValue).HasTitle = False
+    
+    ' 보기 좋게 약간의 레이아웃 조정(원하면 위치/크기 변경)
+    co.Left = ws.Range("G2").Left
+    co.Top = ws.Range("G2").Top
+    co.Width = 640
+    co.Height = 360
+    
+    MsgBox "차트를 추가했습니다: " & CHART_NAME, vbInformation
+    Exit Sub
+EH:
+    MsgBox "오류: " & Err.Description, vbCritical
+End Sub
+
+'=== 유틸리티 ===
+Private Function NzMatch(ByVal key As String, rng As Range) As Long
+    ' A열에서 key 라벨의 행 번호(없으면 0)
+    Dim v
+    On Error Resume Next
+    v = Application.Match(key, rng, 0)
+    On Error GoTo 0
+    If IsError(v) Or IsEmpty(v) Then
+        NzMatch = 0
+    Else
+        NzMatch = CLng(v)
+    End If
+End Function
+
+Private Function NzD(v) As Double
+    If IsNumeric(v) Then
+        NzD = CDbl(v)
+    Else
+        NzD = 0#
+    End If
+End Function
