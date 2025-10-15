@@ -157,3 +157,37 @@ Sub FillNumbers()
     Next i
 End Sub
 
+
+버튼을 클릭했을 때 다음과 같이 동작하는 VBA 코드를 만들어줘.
+B2부터 B3, B4,... 순서로 1부터 A3의 값까지 자동으로 입력해 줘.
+만약에 마지막 값 아래에 숫자가 남아있으면 다 지워줘.
+
+
+Sub FillNumbersToA3()
+    Dim lastRow As Long
+    Dim targetCount As Long
+    Dim i As Long
+    
+    ' A3의 값을 읽어옴
+    targetCount = Range("A3").Value
+    
+    ' 잘못된 값(0 이하 또는 비어 있음)이면 종료
+    If targetCount <= 0 Then
+        MsgBox "A3에 올바른 숫자를 입력하세요.", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 현재 B열의 마지막 데이터 행 찾기
+    lastRow = Cells(Rows.Count, "B").End(xlUp).Row
+    
+    ' 기존 데이터 전체 지우기 (B2 이후)
+    If lastRow >= 2 Then
+        Range("B2:B" & lastRow).ClearContents
+    End If
+    
+    ' 1부터 A3의 값까지 채우기
+    For i = 1 To targetCount
+        Range("B" & (i + 1)).Value = i
+    Next i
+End Sub
+
