@@ -146,3 +146,14 @@ Print(출력 형식): 최종 출력은 공문 형식을 따른다. 문단 구성
 
     2. 첫 글자가 모음인 경우는 첫번째 글자를 함께 표기
       예: original --> 
+
+버튼을 클릭했을 때 다음과 같이 동작하는 VBA 코드를 만들어줘.
+B2부터 B3, B4,... 순서로 1부터 10까지 자동으로 입력해 줘.
+
+Sub FillNumbers()
+    Dim i As Integer
+    For i = 1 To 10
+        Range("B" & (i + 1)).Value = i
+    Next i
+End Sub
+
