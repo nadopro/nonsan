@@ -191,3 +191,47 @@ Sub FillNumbersToA3()
     Next i
 End Sub
 
+
+버튼을 클릭했을 때 다음과 같이 동작하는 VBA 코드를 만들어줘.
+C2부터 C3, C4,... 순서로 1부터 A3의 값까지 자동으로 입력해 줘.
+이때 숫자에 3, 6, 9가 포함된 수는 무시하고 다음 숫자로 넘어가.
+만약에 마지막 값 아래에 숫자가 남아있으면 다 지워줘.
+
+Sub FillNumbersC_Skip369()
+    Dim target As Long
+    Dim n As Long
+    Dim r As Long
+    Dim lastRow As Long
+    
+    ' A3 값 확인
+    If Not IsNumeric(Range("A3").Value) Then
+        MsgBox "A3에 숫자를 입력하세요.", vbExclamation
+        Exit Sub
+    End If
+    
+    target = CLng(Range("A3").Value)
+    If target <= 0 Then
+        MsgBox "A3에는 1 이상의 정수를 입력하세요.", vbExclamation
+        Exit Sub
+    End If
+    
+    ' 기존 값 정리: C2 이후 모두 비우기
+    lastRow = Cells(Rows.Count, "C").End(xlUp).Row
+    If lastRow < 2 Then lastRow = 2
+    Range("C2:C" & lastRow).ClearContents
+    
+    ' C2부터 채우기 (3/6/9 포함된 수는 건너뜀)
+    r = 2
+    For n = 1 To target
+        If Not Contains369(n) Then
+            Cells(r, "C").Value = n
+            r = r + 1
+        End If
+    Next n
+End Sub
+
+Private Function Contains369(ByVal n As Long) As Boolean
+    Dim s As String
+    s = CStr(n)
+    Contains369 = (InStr(1, s, "3") > 0) Or (InStr(1, s, "6") > 0) Or (InStr(1, s, "9") > 0)
+End Function
