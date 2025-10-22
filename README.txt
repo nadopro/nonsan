@@ -519,5 +519,16 @@ End Function
 https://naver.me/FVS7Rqhd
 https://github.com/nadopro
 
-영상 만들기(Vrew, 브루)
+영상 만들기(Vrew, 브루), capcut
 https://vrew.ai
+
+됬다 --> 됐다
+
+뷃
+
+AC00 : 가
+01 : 각
+02 : 갂, 갃
+
+
+힣
