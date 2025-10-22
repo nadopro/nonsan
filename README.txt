@@ -510,3 +510,12 @@ Private Function NzD(v) As Double
         NzD = 0#
     End If
 End Function
+
+
+----------------------------------------
+
+2025-10-22
+
+https://naver.me/FVS7Rqhd
+https://github.com/nadopro
+
