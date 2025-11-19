@@ -1,7 +1,5 @@
 JSON : JavaScript Object Notation
-  id: "test"
-  pw: "1111"
-
+ 
   {} : 객체
   [] : 리스트
 
