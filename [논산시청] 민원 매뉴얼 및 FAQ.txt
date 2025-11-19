@@ -1,3 +1,63 @@
+JSON : JavaScript Object Notation
+  id: "test"
+  pw: "1111"
+
+  {} : 객체
+  [] : 리스트
+
+  1. 하나의 객체 표현
+  {
+    "name":"홍길동",
+    "age": 12,
+    "company":"논산시청"
+  }
+
+  {
+    "name":"홍길동",     "age": 12,     "company":"논산시청"
+  }
+
+  2. 하나의 객체 속에, 객체를 포함
+  {
+    "name":"홍길동",
+    "age": 12,
+    "company": {
+      "name": "논산시청",
+      "http": "https://nonsan.go.kr"
+    }
+  }
+
+  3. 하나의 객체에, 여러개의 객체로 구성
+
+  {
+    "info" : { 
+      "name":"홍길동",
+      "age": 12,
+    },    
+    "company": {
+      "name": "논산시청",
+      "http": "https://nonsan.go.kr"
+    }
+  }
+
+  4. 객체의 나열
+  {
+      "직원": [
+        {
+          "name":"홍길동",
+          "age" : 12
+        },
+        {
+          "name":"이순신",
+          "age" : 34
+        },
+        {
+          "name":"정약용",
+          "age" : 31
+        }
+      ]
+  }
+
+
 
 
 JSON의 예 1
