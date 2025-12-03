@@ -541,3 +541,5 @@ AC00 : 가
 참고, 여행 계획설계
 https://chatgpt.com/g/g-692d95ace5588191b8fa43fc5bd42888-ai-yeohaeng-gyehoeg
 
+엑셀 민원분석
+https://chatgpt.com/g/g-693013b5a18c81918a8fbd131625866e-egsel-gpt-minweon-tonggye-yoyag-doumi
