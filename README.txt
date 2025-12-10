@@ -543,3 +543,16 @@ https://chatgpt.com/g/g-692d95ace5588191b8fa43fc5bd42888-ai-yeohaeng-gyehoeg
 
 엑셀 민원분석
 https://chatgpt.com/g/g-693013b5a18c81918a8fbd131625866e-egsel-gpt-minweon-tonggye-yoyag-doumi
+
+
+2025-12-10
+
+다운로드 : github.com/nadopro/nonsan
+
+1. 강의자료 13
+2. [논산시청] 리비전 친화형 GPTs.txt
+
+내용 : 맞춤형 GPTs와 "기억하기"의 차이 및 구조
+
+3. 강의자료 11
+4. [논산시청] 부서 맞춤형 프롬프트
